@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DZ Darts Rank</title>
+<meta name="description" content="DZ Darts ранк систем. Тамирчин нэмэх, устгах, оноо засах, admin password: Dzdarts9988.">
+<meta name="keywords" content="darts, Mongolia, rank, tamirchin, admin">
+
+<style>
+body{font-family:Arial;margin:10px;background:#0f172a;color:white;}
+h1{text-align:center;color:#facc15;}
+input,button{padding:8px;margin:5px;border-radius:5px;border:1px solid #ccc;}
+button{background:#1f2937;color:white;cursor:pointer;}
+button:hover{background:#374151;}
+table{width:100%;border-collapse:collapse;margin-top:20px;background:#1e293b;}
+th,td{border:1px solid #111;padding:10px;text-align:center;color:white;}
+th{background:#111827;}
+tr:nth-child(even){background:#111827;}
+tr:hover{background:#374151;}
+.admin-panel{display:none;margin-bottom:20px;padding:10px;background:#111827;border-radius:6px;}
+.medal{font-size:22px;}
+</style>
+</head>
+
+<body>
+
+<h1>🎯 DZ Darts Rank</h1>
+<button onclick="login()">Admin Login</button>
+
+<div class="admin-panel" id="adminPanel">
+<h3>Тамирчин нэмэх / засах</h3>
+<input id="name" placeholder="Нэр">
+<input id="club" placeholder="Клуб">
+<input id="points" type="number" placeholder="Оноо">
+<button onclick="addPlayer()">Нэмэх</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Тамирчин</th>
+<th>Клуб</th>
+<th>Оноо</th>
+<th class="admin-col" style="display:none">Edit</th>
+</tr>
+</thead>
+<tbody id="table"></tbody>
+</table>
+
+<script>
+let admin=false;
+const adminPassword="Dzdarts9988";
+
+let players=[
+{name:"Bat",club:"Dalanzadgad",points:1200},
+{name:"Temuulen",club:"Gobi",points:980},
+{name:"Naran",club:"Umnugovi",points:870}
+];
+
+function medal(rank){
+if(rank==1) return "🥇";
+if(rank==2) return "🥈";
+if(rank==3) return "🥉";
+return rank;
+}
+
+function render(){
+players.sort((a,b)=>b.points-a.points);
+let table=document.getElementById("table");
+table.innerHTML="";
+players.forEach((p,i)=>{
+let edit="";
+if(admin){
+edit=`<td>
+<button onclick="editPlayer(${i})">✏️</button>
+<button onclick="deletePlayer(${i})">❌</button>
+</td>`;
+}
+table.innerHTML+=`
+<tr>
+<td class="medal">${medal(i+1)}</td>
+<td>${p.name}</td>
+<td>${p.club}</td>
+<td>${p.points}</td>
+${edit}
+</tr>`;
+});
+}
+
+function login(){
+let pass=prompt("Admin password:");
+if(pass===adminPassword){
+admin=true;
+document.getElementById("adminPanel").style.display="block";
+let editCols=document.getElementsByClassName("admin-col");
+for(let col of editCols){col.style.display="table-cell";}
+alert("Админ нэвтэрлээ!");
+render();
+}else{
+alert("Password буруу!");
+}
+}
+
+function addPlayer(){
+let name=document.getElementById("name").value;
+let club=document.getElementById("club").value;
+let points=parseInt(document.getElementById("points").value);
+if(!name||!club||isNaN(points)){alert("Бүх талбарыг бөглөнө үү!"); return;}
+players.push({name,club,points});
+document.getElementById("name").value="";
+document.getElementById("club").value="";
+document.getElementById("points").value="";
+render();
+}
+
+function deletePlayer(i){
+if(confirm("Энэ тамирчныг устгах уу?")){
+players.splice(i,1);
+render();
+}
+}
+
+function editPlayer(i){
+let newPoints=prompt("Шинэ оноо:",players[i].points);
+if(newPoints!==null){
+players[i].points=parseInt(newPoints);
+render();
+}
+}
+
+render();
+</script>
+
+</body>
+</html>
